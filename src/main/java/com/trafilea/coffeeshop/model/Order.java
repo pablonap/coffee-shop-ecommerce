@@ -57,9 +57,9 @@ public class Order {
                 .mapToDouble(cp -> cp.getProduct().getPrice() * cp.getQuantity())
                 .sum();
 
-        partialTotalAmount = partialTotalAmount + this.shippingAmount;
+        partialTotalAmount = partialTotalAmount - (partialTotalAmount * this.discount);
 
-        return partialTotalAmount - (partialTotalAmount * this.discount);
+        return partialTotalAmount + this.shippingAmount;
     }
 
     public int calculateProductsAmount() {
