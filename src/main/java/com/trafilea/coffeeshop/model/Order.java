@@ -38,13 +38,17 @@ public class Order {
     @Column(name="total_amount")
     private Double totalAmount;
 
+    @Enumerated(EnumType.STRING)
+    private State state;
+
     public Order() {
     }
 
     public Order(Cart cart) {
         this.cart = cart;
-        this.createAt = LocalDateTime.now();
         this.shippingAmount = SHIPPING_DEFAULT_AMOUNT;
+        this.state = State.FINISHED;
+        this.createAt = LocalDateTime.now();
     }
 
     public double calculateTotalAmount() {
@@ -133,6 +137,14 @@ public class Order {
         isFreeShipping = freeShipping;
     }
 
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -143,7 +155,6 @@ public class Order {
         if (id != order.id) return false;
         if (Double.compare(order.discount, discount) != 0) return false;
         if (isFreeShipping != order.isFreeShipping) return false;
-        if (!Objects.equals(cart, order.cart)) return false;
         if (!Objects.equals(createAt, order.createAt)) return false;
         if (!Objects.equals(productsAmount, order.productsAmount))
             return false;
@@ -151,7 +162,8 @@ public class Order {
             return false;
         if (!Objects.equals(shippingAddress, order.shippingAddress))
             return false;
-        return Objects.equals(totalAmount, order.totalAmount);
+        if (!Objects.equals(totalAmount, order.totalAmount)) return false;
+        return state == order.state;
     }
 
     @Override
@@ -159,7 +171,6 @@ public class Order {
         int result;
         long temp;
         result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (cart != null ? cart.hashCode() : 0);
         result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
         result = 31 * result + (productsAmount != null ? productsAmount.hashCode() : 0);
         temp = Double.doubleToLongBits(discount);
@@ -168,6 +179,7 @@ public class Order {
         result = 31 * result + (shippingAmount != null ? shippingAmount.hashCode() : 0);
         result = 31 * result + (shippingAddress != null ? shippingAddress.hashCode() : 0);
         result = 31 * result + (totalAmount != null ? totalAmount.hashCode() : 0);
+        result = 31 * result + (state != null ? state.hashCode() : 0);
         return result;
     }
 
@@ -175,7 +187,6 @@ public class Order {
     public String toString() {
         return "Order{" +
                 "id=" + id +
-                ", cart=" + cart +
                 ", createAt=" + createAt +
                 ", productsAmount=" + productsAmount +
                 ", discount=" + discount +
@@ -183,6 +194,7 @@ public class Order {
                 ", shippingAmount=" + shippingAmount +
                 ", shippingAddress='" + shippingAddress + '\'' +
                 ", totalAmount=" + totalAmount +
+                ", state=" + state +
                 '}';
     }
 }

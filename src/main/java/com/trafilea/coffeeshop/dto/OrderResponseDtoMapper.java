@@ -19,7 +19,8 @@ public class OrderResponseDtoMapper implements Function<Order, OrderResponseDto>
                 order.getDiscount(),
                 order.getShippingAmount(),
                 order.getShippingAddress(),
-                order.getTotalAmount()
+                order.getTotalAmount(),
+                order.getState()
         );
     }
 }

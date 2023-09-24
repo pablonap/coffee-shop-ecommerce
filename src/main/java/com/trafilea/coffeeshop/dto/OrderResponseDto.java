@@ -1,6 +1,7 @@
 package com.trafilea.coffeeshop.dto;
 
 import com.trafilea.coffeeshop.model.Cart;
+import com.trafilea.coffeeshop.model.State;
 
 import java.time.LocalDateTime;
 
@@ -12,5 +13,6 @@ public record OrderResponseDto (
     double discount,
     double shippingAmount,
     String shippingAddress,
-    double totalAmount
+    double totalAmount,
+    State state
 ) {}

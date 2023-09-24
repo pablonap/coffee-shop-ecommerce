@@ -5,6 +5,7 @@ import com.trafilea.coffeeshop.dto.OrderResponseDto;
 import com.trafilea.coffeeshop.dto.OrderResponseDtoMapper;
 import com.trafilea.coffeeshop.model.Cart;
 import com.trafilea.coffeeshop.model.Order;
+import com.trafilea.coffeeshop.model.State;
 import com.trafilea.coffeeshop.repository.CartRepository;
 import com.trafilea.coffeeshop.repository.OrderRepository;
 import org.springframework.stereotype.Service;
@@ -44,9 +45,9 @@ public class PlaceOrderService {
         order.setProductsAmount(order.calculateProductsAmount());
         order.setTotalAmount(order.calculateTotalAmount());
 
+        order.getCart().setState(State.FINISHED);
         Order savedOrder = orderRepository.save(order);
-        OrderResponseDto orderResponseDto = orderResponseDtoMapper.apply(savedOrder);
 
-        return orderResponseDto;
+        return orderResponseDtoMapper.apply(savedOrder);
     }
 }

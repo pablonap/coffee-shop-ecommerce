@@ -20,11 +20,15 @@ public class Cart implements PromotionStrategies {
     @Column(name="create_at")
     private LocalDateTime createAt;
 
+    @Enumerated(EnumType.STRING)
+    private State state;
+
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<CartProduct> cartProducts;
 
     public Cart() {
         cartProducts = new HashSet<>();
+        state = State.ON_PROCESS;
         this.createAt = LocalDateTime.now();
     }
 
@@ -103,6 +107,14 @@ public class Cart implements PromotionStrategies {
         this.cartProducts = cartProducts;
     }
 
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -112,7 +124,8 @@ public class Cart implements PromotionStrategies {
 
         if (id != cart.id) return false;
         if (userId != cart.userId) return false;
-        return Objects.equals(createAt, cart.createAt);
+        if (!Objects.equals(createAt, cart.createAt)) return false;
+        return state == cart.state;
     }
 
     @Override
@@ -120,6 +133,7 @@ public class Cart implements PromotionStrategies {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (int) (userId ^ (userId >>> 32));
         result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
+        result = 31 * result + (state != null ? state.hashCode() : 0);
         return result;
     }
 
@@ -129,6 +143,7 @@ public class Cart implements PromotionStrategies {
                 "id=" + id +
                 ", userId=" + userId +
                 ", createAt=" + createAt +
+                ", state=" + state +
                 '}';
     }
 }
