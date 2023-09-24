@@ -1,5 +1,6 @@
 package com.trafilea.coffeeshop.controller;
 
+import com.trafilea.coffeeshop.dto.CartProductQuantityRequestDto;
 import com.trafilea.coffeeshop.dto.CartRequestDto;
 import com.trafilea.coffeeshop.dto.CartResponseDto;
 import com.trafilea.coffeeshop.service.CartService;
@@ -27,5 +28,11 @@ public class CartController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CartResponseDto> addProduct(@PathVariable("cartId") long cartId , @RequestBody CartRequestDto cartRequestDto) {
         return new ResponseEntity<>(cartService.addProduct(cartId, cartRequestDto), HttpStatus.OK);
+    }
+
+    @PutMapping("/{cartId}/product/{productId}/quantity")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<CartResponseDto> modifyQuantity(@PathVariable("cartId") long cartId, @PathVariable("productId") long productId, @RequestBody CartProductQuantityRequestDto cartProductQuantityRequestDto) {
+        return new ResponseEntity<>(cartService.modifyQuantity(cartId, productId, cartProductQuantityRequestDto), HttpStatus.OK);
     }
 }

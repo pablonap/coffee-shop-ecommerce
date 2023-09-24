@@ -9,7 +9,7 @@ import java.util.Objects;
 public class CartProduct  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
@@ -37,11 +37,11 @@ public class CartProduct  {
         this.quantity = quantity + amount;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -76,15 +76,15 @@ public class CartProduct  {
 
         CartProduct that = (CartProduct) o;
 
+        if (id != that.id) return false;
         if (quantity != that.quantity) return false;
-        if (!Objects.equals(id, that.id)) return false;
         if (!Objects.equals(cart, that.cart)) return false;
         return Objects.equals(product, that.product);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (cart != null ? cart.hashCode() : 0);
         result = 31 * result + (product != null ? product.hashCode() : 0);
         result = 31 * result + quantity;

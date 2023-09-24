@@ -9,7 +9,7 @@ import java.util.Objects;
 public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Enumerated(EnumType.STRING)
     private ERole name;
@@ -19,11 +19,11 @@ public class RoleEntity {
     public RoleEntity(ERole name) {
         this.name = name;
     }
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -42,13 +42,13 @@ public class RoleEntity {
 
         RoleEntity that = (RoleEntity) o;
 
-        if (!Objects.equals(id, that.id)) return false;
+        if (id != that.id) return false;
         return name == that.name;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }

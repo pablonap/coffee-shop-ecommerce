@@ -13,7 +13,7 @@ import java.util.Set;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @NotBlank
     @Size(max = 30)
@@ -44,11 +44,11 @@ public class UserEntity {
         this.roles = roles;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -91,18 +91,20 @@ public class UserEntity {
 
         UserEntity that = (UserEntity) o;
 
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(email, that.email)) return false;
+        if (id != that.id) return false;
         if (!Objects.equals(username, that.username)) return false;
-        return Objects.equals(password, that.password);
+        if (!Objects.equals(email, that.email)) return false;
+        if (!Objects.equals(password, that.password)) return false;
+        return Objects.equals(roles, that.roles);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (email != null ? email.hashCode() : 0);
+        int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (username != null ? username.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (roles != null ? roles.hashCode() : 0);
         return result;
     }
 

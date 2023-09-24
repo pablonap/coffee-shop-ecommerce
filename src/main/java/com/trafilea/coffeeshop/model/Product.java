@@ -10,7 +10,7 @@ import java.util.Set;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     private String name;
 
@@ -29,11 +29,11 @@ public class Product {
         this.category = category;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -68,7 +68,7 @@ public class Product {
 
         Product product = (Product) o;
 
-        if (!Objects.equals(id, product.id)) return false;
+        if (id != product.id) return false;
         if (!Objects.equals(name, product.name)) return false;
         if (!Objects.equals(price, product.price)) return false;
         return Objects.equals(category, product.category);
@@ -76,7 +76,7 @@ public class Product {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
         result = 31 * result + (category != null ? category.hashCode() : 0);

@@ -12,11 +12,10 @@ import java.util.Set;
 public class Cart implements PromotionStrategies {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cart_sequence")
-    private Long id;
+    private long id;
 
     @Column(name="user_id")
-    private Long userId;
+    private long userId;
 
     @Column(name="create_at")
     private LocalDateTime createAt;
@@ -72,19 +71,19 @@ public class Cart implements PromotionStrategies {
         return false;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public Long getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
@@ -111,15 +110,15 @@ public class Cart implements PromotionStrategies {
 
         Cart cart = (Cart) o;
 
-        if (!Objects.equals(id, cart.id)) return false;
-        if (!Objects.equals(userId, cart.userId)) return false;
+        if (id != cart.id) return false;
+        if (userId != cart.userId) return false;
         return Objects.equals(createAt, cart.createAt);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (int) (userId ^ (userId >>> 32));
         result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
         return result;
     }

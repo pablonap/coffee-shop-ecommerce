@@ -1,9 +1,6 @@
 package com.trafilea.coffeeshop.service;
 
-import com.trafilea.coffeeshop.dto.CartRequestDto;
-import com.trafilea.coffeeshop.dto.CartResponseDto;
-import com.trafilea.coffeeshop.dto.CartResponseDtoMapper;
-import com.trafilea.coffeeshop.dto.OrderResponseDtoMapper;
+import com.trafilea.coffeeshop.dto.*;
 import com.trafilea.coffeeshop.model.Cart;
 import com.trafilea.coffeeshop.model.CartProduct;
 import com.trafilea.coffeeshop.model.Product;
@@ -60,6 +57,22 @@ public class CartService {
 
         CartProduct cartProduct = CartProduct.cartProductOf(cart, product, cartRequestDto.quantity());
         cart.getCartProducts().add(cartProduct);
+        Cart savedCart = cartRepository.save(cart);
+
+        return cartResponseDtoMapper.apply(savedCart);
+
+    }
+
+    public CartResponseDto modifyQuantity(long cartId, long productId, CartProductQuantityRequestDto dto) {
+        Cart cart = cartRepository.findById(cartId).orElseThrow(IllegalArgumentException::new);
+        Product product = productRepository.findById(productId).orElseThrow(IllegalArgumentException::new);
+
+        CartProduct cartProduct = cart.getCartProducts().stream()
+                .filter(cp -> cp.getProduct().getId() == product.getId())
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("Error searching for product ID = " + product.getId()));
+
+        cartProduct.setQuantity(dto.quantity());
+
         Cart savedCart = cartRepository.save(cart);
 
         return cartResponseDtoMapper.apply(savedCart);

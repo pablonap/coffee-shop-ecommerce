@@ -10,7 +10,7 @@ import java.util.Objects;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @OneToOne
     @JoinColumn(name="cart_id")
@@ -65,7 +65,7 @@ public class Order {
                 .sum();
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
@@ -140,9 +140,10 @@ public class Order {
 
         Order order = (Order) o;
 
+        if (id != order.id) return false;
         if (Double.compare(order.discount, discount) != 0) return false;
         if (isFreeShipping != order.isFreeShipping) return false;
-        if (!Objects.equals(id, order.id)) return false;
+        if (!Objects.equals(cart, order.cart)) return false;
         if (!Objects.equals(createAt, order.createAt)) return false;
         if (!Objects.equals(productsAmount, order.productsAmount))
             return false;
@@ -157,7 +158,8 @@ public class Order {
     public int hashCode() {
         int result;
         long temp;
-        result = id != null ? id.hashCode() : 0;
+        result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (cart != null ? cart.hashCode() : 0);
         result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
         result = 31 * result + (productsAmount != null ? productsAmount.hashCode() : 0);
         temp = Double.doubleToLongBits(discount);
