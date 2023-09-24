@@ -7,3 +7,6 @@ services:
       - [SOME_LOCAL_PATH]/db:/var/lib/mysql
     ports: 
      - 3307:3306
+    environment:
+      MYSQL_DATABASE: coffee-shop
+      MYSQL_ROOT_PASSWORD: root
