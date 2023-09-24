@@ -8,7 +8,9 @@ import com.trafilea.coffeeshop.model.Order;
 import com.trafilea.coffeeshop.model.State;
 import com.trafilea.coffeeshop.repository.CartRepository;
 import com.trafilea.coffeeshop.repository.OrderRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 public class PlaceOrderService {
@@ -26,6 +28,10 @@ public class PlaceOrderService {
 
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
         Cart cart = cartRepository.findById(orderRequestDto.cartId()).orElseThrow(IllegalArgumentException::new);
+
+        if (cart.getState().equals(State.FINISHED)) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Cart with ID " + cart.getId() + " is already finished");
+        }
 
         Order order = new Order(cart);
 
