@@ -1,0 +1,9 @@
+version: "3"
+services:
+  mysqldb: 
+    container_name: mysqldb
+    image: mysql
+    volumes:
+      - [SOME_LOCAL_PATH]/db:/var/lib/mysql
+    ports: 
+     - 3307:3306

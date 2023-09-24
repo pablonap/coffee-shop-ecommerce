@@ -1,0 +1,24 @@
+version: "3"
+services:
+  coffee-shop-app:
+    image: coffee-shop-app
+    restart: always
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      DB_HOST: mysqldb
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_PORT: 3306
+      SECRET_KEY: 5a06b6d8350f9ea8fe6397270995b0a4e46464e75ebf59acc7c5c79fd7194eac
+  mysqldb: 
+    container_name: mysqldb
+    image: mysql
+    volumes:
+      - [SOME_LOCAL_PATH]/db:/var/lib/mysql
+    ports: 
+     - 3307:3306
+    environment:
+      MYSQL_DATABASE: coffee-shop
+      MYSQL_ROOT_PASSWORD: root
