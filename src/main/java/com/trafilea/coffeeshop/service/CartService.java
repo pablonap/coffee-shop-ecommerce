@@ -47,17 +47,23 @@ public class CartService {
 
         Cart cart = new Cart();
         cart.setUserId(userEntity.getId());
-
-        CartProduct cartProduct = new CartProduct();
-        cartProduct.setCart(cart);
-        cartProduct.setProduct(product);
-        cartProduct.setQuantity(cartRequestDto.quantity());
-
+        CartProduct cartProduct = CartProduct.cartProductOf(cart, product, cartRequestDto.quantity());
         cart.getCartProducts().add(cartProduct);
-
         Cart savedCart = cartRepository.save(cart);
 
         return cartResponseDtoMapper.apply(savedCart);
+    }
+
+    public CartResponseDto addProduct(long cartId, CartRequestDto cartRequestDto) {
+        Cart cart = cartRepository.findById(cartId).orElseThrow(IllegalArgumentException::new);
+        Product product = productRepository.findById(cartRequestDto.productId()).orElseThrow(IllegalArgumentException::new);
+
+        CartProduct cartProduct = CartProduct.cartProductOf(cart, product, cartRequestDto.quantity());
+        cart.getCartProducts().add(cartProduct);
+        Cart savedCart = cartRepository.save(cart);
+
+        return cartResponseDtoMapper.apply(savedCart);
+
     }
 
     private Optional<String> getLoggedInUsername() {

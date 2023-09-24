@@ -24,9 +24,13 @@ public class CartProduct  {
     public CartProduct() {
     }
 
-    public CartProduct(Product product, int quantity) {
-        this.product = product;
-        this.quantity = quantity;
+    public static CartProduct cartProductOf (Cart cart, Product product, int quantity) {
+        CartProduct cartProduct = new CartProduct();
+        cartProduct.setCart(cart);
+        cartProduct.setProduct(product);
+        cartProduct.setQuantity(quantity);
+
+        return cartProduct;
     }
 
     public void addToQuantity(int amount) {
