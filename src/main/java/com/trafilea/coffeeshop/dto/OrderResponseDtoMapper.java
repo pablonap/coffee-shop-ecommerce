@@ -13,6 +13,7 @@ public class OrderResponseDtoMapper implements Function<Order, OrderResponseDto>
         final DateTimeFormatter newFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return new OrderResponseDto(
                 order.getId(),
+                order.getCart().getId(),
                 order.getCreateAt().format(newFormatter),
                 order.getProductsAmount(),
                 order.getDiscount(),
