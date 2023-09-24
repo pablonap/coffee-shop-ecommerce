@@ -2,6 +2,7 @@ package com.trafilea.coffeeshop.service;
 
 import com.trafilea.coffeeshop.model.CartProduct;
 import com.trafilea.coffeeshop.model.Order;
+import com.trafilea.coffeeshop.model.ProductCategory;
 
 import java.util.Optional;
 
@@ -11,7 +12,7 @@ public enum PromotionType {
         public void applyPromotion(Order order) {
             Optional<CartProduct> coffeeProduct = order.getCart().getCartProducts()
                     .stream()
-                    .filter(cp -> "coffee".equals(cp.getProduct().getCategory()))
+                    .filter(cp -> ProductCategory.COFFEE.getDescription().equals(cp.getProduct().getCategory()))
                     .findFirst();
 
             CartProduct cartProduct = coffeeProduct.orElseThrow(() -> new RuntimeException("Promotion cannot be applied"));

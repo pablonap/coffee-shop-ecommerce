@@ -32,7 +32,7 @@ public class Cart implements PromotionStrategies {
     public boolean applyExtraCoffee() {
         int amountOfCoffeeProducts = this.getCartProducts()
                 .stream()
-                .filter(cp -> "coffee".equals(cp.getProduct().getCategory()))
+                .filter(cp -> ProductCategory.COFFEE.getDescription().equals(cp.getProduct().getCategory()))
                 .mapToInt(CartProduct::getQuantity)
                 .sum();
 
@@ -46,7 +46,7 @@ public class Cart implements PromotionStrategies {
     public boolean applyFreeShipping() {
         long amountOfEquipmentProducts = this.getCartProducts()
                 .stream()
-                .filter(cp -> "equipment".equals(cp.getProduct().getCategory()))
+                .filter(cp -> ProductCategory.EQUIPMENT.getDescription().equals(cp.getProduct().getCategory()))
                 .mapToInt(CartProduct::getQuantity)
                 .sum();
 
@@ -61,7 +61,7 @@ public class Cart implements PromotionStrategies {
         final Double LIMIT_AMOUNT = 70.0;
         Double totalPriceOfAccessoriesProducts = this.getCartProducts()
                 .stream()
-                .filter(cp -> "accessories".equals(cp.getProduct().getCategory()))
+                .filter(cp -> ProductCategory.ACCESSORIES.getDescription().equals(cp.getProduct().getCategory()))
                 .mapToDouble(cp -> cp.getProduct().getPrice() * cp.getQuantity())
                 .sum();
 
