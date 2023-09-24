@@ -97,11 +97,11 @@ public class Order {
         this.productsAmount = productsAmount;
     }
 
-    public Double getDiscount() {
+    public double getDiscount() {
         return discount;
     }
 
-    public void setDiscount(Double discount) {
+    public void setDiscount(double discount) {
         this.discount = discount;
     }
 
