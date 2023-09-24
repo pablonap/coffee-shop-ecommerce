@@ -1,5 +1,7 @@
 package com.trafilea.coffeeshop.service;
 
+import com.trafilea.coffeeshop.exception.ExceptionMessages;
+import com.trafilea.coffeeshop.exception.PromotionApplicationException;
 import com.trafilea.coffeeshop.model.CartProduct;
 import com.trafilea.coffeeshop.model.Order;
 import com.trafilea.coffeeshop.model.ProductCategory;
@@ -15,7 +17,8 @@ public enum PromotionType {
                     .filter(cp -> ProductCategory.COFFEE.getDescription().equals(cp.getProduct().getCategory()))
                     .findFirst();
 
-            CartProduct cartProduct = coffeeProduct.orElseThrow(() -> new RuntimeException("Promotion cannot be applied"));
+            CartProduct cartProduct = coffeeProduct
+                    .orElseThrow(() -> new PromotionApplicationException(ExceptionMessages.PROMOTION_APPLICATION_EXCEPTION.getMessage()));
             cartProduct.addToQuantity(1);
         }
     },

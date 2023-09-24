@@ -3,6 +3,9 @@ package com.trafilea.coffeeshop.service;
 import com.trafilea.coffeeshop.dto.OrderRequestDto;
 import com.trafilea.coffeeshop.dto.OrderResponseDto;
 import com.trafilea.coffeeshop.dto.OrderResponseDtoMapper;
+import com.trafilea.coffeeshop.exception.CartStateException;
+import com.trafilea.coffeeshop.exception.ExceptionMessages;
+import com.trafilea.coffeeshop.exception.ResourceNotFoundException;
 import com.trafilea.coffeeshop.model.Cart;
 import com.trafilea.coffeeshop.model.Order;
 import com.trafilea.coffeeshop.model.State;
@@ -27,10 +30,11 @@ public class PlaceOrderService {
     }
 
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
-        Cart cart = cartRepository.findById(orderRequestDto.cartId()).orElseThrow(IllegalArgumentException::new);
+        Cart cart = cartRepository.findById(orderRequestDto.cartId())
+                .orElseThrow(() -> new ResourceNotFoundException(ExceptionMessages.RESOURCE_NOT_FOUND.getMessage()));
 
         if (cart.getState().equals(State.FINISHED)) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Cart with ID " + cart.getId() + " is already finished");
+            throw new CartStateException(ExceptionMessages.CART_STATE_EXCEPTION.getMessage());
         }
 
         Order order = new Order(cart);
