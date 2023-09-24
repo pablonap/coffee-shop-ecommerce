@@ -1,5 +1,6 @@
 package com.trafilea.coffeeshop.service.utils;
 
+import com.trafilea.coffeeshop.dto.CartRequestDto;
 import com.trafilea.coffeeshop.dto.OrderRequestDto;
 import com.trafilea.coffeeshop.dto.OrderResponseDto;
 import com.trafilea.coffeeshop.model.Cart;
@@ -61,4 +62,7 @@ public final class TestsUtils {
     }
 
 
+    public static CartRequestDto cartRequestDtoOf(long productId, int quantity) {
+        return new CartRequestDto(productId, quantity);
+    }
 }
