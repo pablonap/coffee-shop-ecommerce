@@ -3,6 +3,7 @@ package com.trafilea.coffeeshop.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import java.util.Set;
 public class Cart implements PromotionStrategies {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cart_sequence")
     private Long id;
 
     @Column(name="user_id")
@@ -21,6 +23,11 @@ public class Cart implements PromotionStrategies {
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<CartProduct> cartProducts;
+
+    public Cart() {
+        cartProducts = new HashSet<>();
+        this.createAt = LocalDateTime.now();
+    }
 
     @Override
     public boolean applyExtraCoffee() {
@@ -123,7 +130,6 @@ public class Cart implements PromotionStrategies {
                 "id=" + id +
                 ", userId=" + userId +
                 ", createAt=" + createAt +
-                ", cartProducts=" + cartProducts +
                 '}';
     }
 }

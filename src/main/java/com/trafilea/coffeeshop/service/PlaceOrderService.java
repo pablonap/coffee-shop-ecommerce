@@ -1,5 +1,6 @@
 package com.trafilea.coffeeshop.service;
 
+import com.trafilea.coffeeshop.dto.OrderRequestDto;
 import com.trafilea.coffeeshop.dto.OrderResponseDto;
 import com.trafilea.coffeeshop.dto.OrderResponseDtoMapper;
 import com.trafilea.coffeeshop.model.Cart;
@@ -22,8 +23,8 @@ public class PlaceOrderService {
         this.orderResponseDtoMapper = orderResponseDtoMapper;
     }
 
-    public OrderResponseDto createOrder(Long cartId) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow(IllegalArgumentException::new);
+    public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
+        Cart cart = cartRepository.findById(orderRequestDto.cartId()).orElseThrow(IllegalArgumentException::new);
 
         Order order = new Order(cart);
 
@@ -39,6 +40,7 @@ public class PlaceOrderService {
             PromotionType.DISCOUNT.applyPromotion(order);
         }
 
+        order.setShippingAddress(orderRequestDto.shippingAddress());
         order.setProductsAmount(order.calculateProductsAmount());
         order.setTotalAmount(order.calculateTotalAmount());
 

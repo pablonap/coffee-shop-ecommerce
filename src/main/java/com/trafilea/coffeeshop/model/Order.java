@@ -19,18 +19,23 @@ public class Order {
     @Column(name="create_at")
     private LocalDateTime createAt;
 
+    @Column(name="products_amount")
     private Integer productsAmount;
 
-    private Double discount;
+    private double discount;
 
+    @Column(name="is_free_shipping")
     private boolean isFreeShipping = false;
 
     private static final Double SHIPPING_DEFAULT_AMOUNT = 5.0;
 
+    @Column(name="shipping_amount")
     private Double shippingAmount;
 
+    @Column(name="shipping_address")
     private String shippingAddress;
 
+    @Column(name="total_amount")
     private Double totalAmount;
 
     public Order() {
@@ -135,13 +140,12 @@ public class Order {
 
         Order order = (Order) o;
 
+        if (Double.compare(order.discount, discount) != 0) return false;
         if (isFreeShipping != order.isFreeShipping) return false;
         if (!Objects.equals(id, order.id)) return false;
-        if (!Objects.equals(cart, order.cart)) return false;
         if (!Objects.equals(createAt, order.createAt)) return false;
         if (!Objects.equals(productsAmount, order.productsAmount))
             return false;
-        if (!Objects.equals(discount, order.discount)) return false;
         if (!Objects.equals(shippingAmount, order.shippingAmount))
             return false;
         if (!Objects.equals(shippingAddress, order.shippingAddress))
@@ -151,11 +155,13 @@ public class Order {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (cart != null ? cart.hashCode() : 0);
+        int result;
+        long temp;
+        result = id != null ? id.hashCode() : 0;
         result = 31 * result + (createAt != null ? createAt.hashCode() : 0);
         result = 31 * result + (productsAmount != null ? productsAmount.hashCode() : 0);
-        result = 31 * result + (discount != null ? discount.hashCode() : 0);
+        temp = Double.doubleToLongBits(discount);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (isFreeShipping ? 1 : 0);
         result = 31 * result + (shippingAmount != null ? shippingAmount.hashCode() : 0);
         result = 31 * result + (shippingAddress != null ? shippingAddress.hashCode() : 0);

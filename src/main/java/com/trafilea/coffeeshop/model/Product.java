@@ -90,7 +90,6 @@ public class Product {
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", category='" + category + '\'' +
-                ", cartProducts=" + cartProducts +
                 '}';
     }
 }
