@@ -100,3 +100,14 @@ curl --location 'http://localhost:8080/api/v1/orders/create' \
 `
 
 • When the Cart is created, it's set to ON_PROCESS state and when an order is generated, both the Cart and the Order switch to FINISHED state. You cannot generate a new Order with a Cart whose state is FINISHED.
+
+## Technologies involved
+### • Java 17
+### • Spring boot 3+
+### • Spring Web
+### • Spring Data JPA
+### • MySql
+### • Spring Security
+### • FlyWay
+### • JUnit5
+### • Docker
