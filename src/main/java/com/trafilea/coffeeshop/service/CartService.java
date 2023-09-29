@@ -14,12 +14,17 @@ import com.trafilea.coffeeshop.model.UserEntity;
 import com.trafilea.coffeeshop.repository.CartRepository;
 import com.trafilea.coffeeshop.repository.ProductRepository;
 import com.trafilea.coffeeshop.repository.UserRepository;
+import java.util.Objects;
+import java.util.function.Supplier;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
+import static java.util.Objects.requireNonNull;
 
 @Service
 public class CartService {
@@ -28,16 +33,23 @@ public class CartService {
     private final UserRepository userRepository;
     private final CartResponseDtoMapper cartResponseDtoMapper;
 
-    public CartService(CartRepository cartRepository,
-                       ProductRepository productRepository,
-                       UserRepository userRepository,
-                       CartResponseDtoMapper cartResponseDtoMapper) {
-        this.cartRepository = cartRepository;
-        this.productRepository = productRepository;
-        this.userRepository = userRepository;
-        this.cartResponseDtoMapper = cartResponseDtoMapper;
+    private final Supplier<Optional<Authentication>> userProvider;
+
+    public CartService(
+        CartRepository cartRepository,
+        ProductRepository productRepository,
+        UserRepository userRepository,
+        CartResponseDtoMapper cartResponseDtoMapper,
+        Supplier<Optional<Authentication>> userProvider
+    ) {
+        this.cartRepository = requireNonNull(cartRepository);
+        this.productRepository = requireNonNull(productRepository);
+        this.userRepository = requireNonNull(userRepository);
+        this.cartResponseDtoMapper = requireNonNull(cartResponseDtoMapper);
+        this.userProvider = requireNonNull(userProvider);
     }
 
+    @Transactional
     public CartResponseDto create(CartRequestDto cartRequestDto) {
         Product product = productRepository.findById(cartRequestDto.productId()).orElseThrow(IllegalArgumentException::new);
         String username = getLoggedInUsername()
@@ -47,29 +59,30 @@ public class CartService {
         UserEntity userEntity = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException(ExceptionMessages.RESOURCE_NOT_FOUND.getMessage()));
 
-        Cart cart = new Cart();
-        cart.setUserId(userEntity.getId());
-        CartProduct cartProduct = CartProduct.cartProductOf(cart, product, cartRequestDto.quantity());
-        cart.getCartProducts().add(cartProduct);
-        Cart savedCart = cartRepository.save(cart);
+        Cart cart = Cart.createCart(userEntity);
+        cart.addProduct(product, cartRequestDto.quantity());
+        Cart savedCart = cartRepository.saveAndFlush(cart);
 
         return cartResponseDtoMapper.apply(savedCart);
     }
 
-    public CartResponseDto addProduct(long cartId, CartRequestDto cartRequestDto) {
+    @Transactional
+    public CartResponseDto addProduct(long cartId, @NonNull CartRequestDto cartRequestDto) {
+        Objects.requireNonNull(cartRequestDto);
         Cart cart = cartRepository.findById(cartId).orElseThrow(IllegalArgumentException::new);
         Product product = productRepository.findById(cartRequestDto.productId())
                 .orElseThrow(() -> new ResourceNotFoundException(ExceptionMessages.RESOURCE_NOT_FOUND.getMessage()));
 
-        CartProduct cartProduct = CartProduct.cartProductOf(cart, product, cartRequestDto.quantity());
-        cart.getCartProducts().add(cartProduct);
+        cart.addProduct(product, cartRequestDto.quantity());
         Cart savedCart = cartRepository.save(cart);
 
         return cartResponseDtoMapper.apply(savedCart);
 
     }
 
-    public CartResponseDto modifyQuantity(long cartId, long productId, CartProductQuantityRequestDto dto) {
+    @Transactional
+    public CartResponseDto modifyQuantity(long cartId, long productId, @NonNull CartProductQuantityRequestDto dto) {
+        requireNonNull(dto);
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException(ExceptionMessages.RESOURCE_NOT_FOUND.getMessage()));
         Product product = productRepository.findById(productId)
@@ -88,11 +101,6 @@ public class CartService {
     }
 
     private Optional<String> getLoggedInUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            return Optional.of(authentication.getName());
-        }
-
-        return Optional.empty();
+        return userProvider.get().map(Authentication::getName);
     }
 }

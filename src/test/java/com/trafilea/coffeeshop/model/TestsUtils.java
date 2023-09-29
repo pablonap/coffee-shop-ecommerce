@@ -1,4 +1,4 @@
-package com.trafilea.coffeeshop.service.utils;
+package com.trafilea.coffeeshop.model;
 
 import com.trafilea.coffeeshop.dto.CartRequestDto;
 import com.trafilea.coffeeshop.dto.OrderRequestDto;

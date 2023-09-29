@@ -4,6 +4,8 @@ import com.trafilea.coffeeshop.security.filters.JwtAuthenticationFilter;
 import com.trafilea.coffeeshop.security.filters.JwtAuthorizationFilter;
 import com.trafilea.coffeeshop.security.jwt.JwtUtils;
 import com.trafilea.coffeeshop.service.UserDetailsServiceImpl;
+import java.util.Optional;
+import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +14,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -61,6 +65,12 @@ public class SecurityConfig {
         return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder)
+                // TODO: get rid of and method call as it is marked for removal
                 .and().build();
+    }
+
+    @Bean
+    Supplier<Optional<Authentication>> userProvider() {
+        return () -> Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
     }
 }

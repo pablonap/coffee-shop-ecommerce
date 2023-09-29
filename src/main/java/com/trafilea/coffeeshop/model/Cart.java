@@ -1,12 +1,16 @@
 package com.trafilea.coffeeshop.model;
 
+import com.google.common.base.Preconditions;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import org.springframework.lang.NonNull;
+import static java.util.Objects.requireNonNull;
 
+// inconsistent naming convention, some entities doesn't include suffix "Entity" while others do
 @Entity
 @Table(name = "carts")
 public class Cart implements PromotionStrategies {
@@ -14,6 +18,7 @@ public class Cart implements PromotionStrategies {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    // FIXME: map User type instead
     @Column(name="user_id")
     private long userId;
 
@@ -23,13 +28,35 @@ public class Cart implements PromotionStrategies {
     @Enumerated(EnumType.STRING)
     private State state;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartProduct> cartProducts;
 
-    public Cart() {
-        cartProducts = new HashSet<>();
-        state = State.ON_PROCESS;
-        this.createAt = LocalDateTime.now();
+    Cart() {
+    }
+
+    /**
+     * creates an empty Cart owned by the given {@link UserEntity}
+     * @param user the owner
+     * @return the empty Cart for such user
+     */
+    public static Cart createCart(@NonNull UserEntity user) {
+        requireNonNull(user);
+        final var result = new Cart();
+        result.setUserId(user.getId());
+        result.cartProducts = new HashSet<>();
+        result.state = State.ON_PROCESS;
+        result.createAt = LocalDateTime.now();
+        return result;
+    }
+
+    public void addProduct(@NonNull Product product, int quantity) {
+        requireNonNull(product);
+        cartProducts.stream().filter(cp -> product.equals(cp.getProduct()))
+            .findAny() // no need to use findFirst since Set doesn't allow dupes
+            .ifPresentOrElse(
+                cp -> cp.addQuantity(quantity),
+                () -> this.cartProducts.add(CartProduct.cartProductOf(this, product, quantity))
+            );
     }
 
     @Override
@@ -54,25 +81,19 @@ public class Cart implements PromotionStrategies {
                 .mapToInt(CartProduct::getQuantity)
                 .sum();
 
-        if (amountOfEquipmentProducts > 3) {
-            return true;
-        }
-        return false;
+      return amountOfEquipmentProducts > 3;
     }
 
     @Override
     public boolean applyDiscount() {
-        final Double LIMIT_AMOUNT = 70.0;
-        Double totalPriceOfAccessoriesProducts = this.getCartProducts()
+        final double LIMIT_AMOUNT = 70.0;
+        double totalPriceOfAccessoriesProducts = this.getCartProducts()
                 .stream()
                 .filter(cp -> ProductCategory.ACCESSORIES.getDescription().equals(cp.getProduct().getCategory()))
                 .mapToDouble(cp -> cp.getProduct().getPrice() * cp.getQuantity())
                 .sum();
 
-        if (totalPriceOfAccessoriesProducts > LIMIT_AMOUNT) {
-            return true;
-        }
-        return false;
+      return totalPriceOfAccessoriesProducts > LIMIT_AMOUNT;
     }
 
     public long getId() {
@@ -100,11 +121,7 @@ public class Cart implements PromotionStrategies {
     }
 
     public Set<CartProduct> getCartProducts() {
-        return cartProducts;
-    }
-
-    public void setCartProducts(Set<CartProduct> cartProducts) {
-        this.cartProducts = cartProducts;
+        return Set.copyOf(cartProducts);
     }
 
     public State getState() {

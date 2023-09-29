@@ -1,26 +1,17 @@
 package com.trafilea.coffeeshop.service;
 
-import com.trafilea.coffeeshop.dto.CartRequestDto;
 import com.trafilea.coffeeshop.dto.CartResponseDtoMapper;
-import com.trafilea.coffeeshop.model.Cart;
-import com.trafilea.coffeeshop.model.Product;
-import com.trafilea.coffeeshop.model.ProductCategory;
-import com.trafilea.coffeeshop.model.UserEntity;
 import com.trafilea.coffeeshop.repository.CartRepository;
 import com.trafilea.coffeeshop.repository.ProductRepository;
 import com.trafilea.coffeeshop.repository.UserRepository;
-import com.trafilea.coffeeshop.service.utils.TestsUtils;
+import java.util.Optional;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-
-import static org.mockito.Mockito.*;
+import org.springframework.security.core.Authentication;
 
 @ExtendWith(MockitoExtension.class)
 public class CartServiceTests {
@@ -38,6 +29,9 @@ public class CartServiceTests {
 
     @InjectMocks
     private CartService underTest;
+
+    @Mock
+    private Supplier<Optional<Authentication>> authSupplier;
 
     @Test
     void itShouldCreateCart() {
@@ -70,17 +64,17 @@ public class CartServiceTests {
     }
 
     @Test
-    void itShouldModifyQuanity() {
+    void itShouldModifyQuantity() {
         // TODO
     }
 
     @Test
-    void itShouldNotModifyQuanityIfCartNotFound() {
+    void itShouldNotModifyQuantityIfCartNotFound() {
         // TODO
     }
 
     @Test
-    void itShouldNotModifyQuanityIfProductNotFound() {
+    void itShouldNotModifyQuantityIfProductNotFound() {
         // TODO
     }
 }

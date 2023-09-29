@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import java.util.Objects;
 import java.util.Set;
 
+// inconsistent naming convention, some entities doesn't include suffix "Entity" while others do
 @Entity
 @Table(name = "users")
 public class UserEntity {

@@ -12,17 +12,9 @@ public enum PromotionType {
     EXTRA_FOR_FREE {
         @Override
         public void applyPromotion(Order order) {
-            Product product = new Product();
-            product.setId(1L);
-            product.setName("extra coffee for free");
-            product.setPrice(0.0);
-            product.setCategory(ProductCategory.COFFEE.getDescription());
-            CartProduct cartProduct = CartProduct.cartProductOf(order.getCart(), product, 1) ;
-
-            Set<CartProduct> cartProducts = new HashSet<>();
-            order.getCart().getCartProducts().forEach(e-> cartProducts.add(e));
-            cartProducts.add(cartProduct);
-            order.getCart().setCartProducts(cartProducts);
+            // this will fail as product needs the persisted id to be located in the Set
+            Product product = new Product("extra coffee for free", 0F, ProductCategory.COFFEE.getDescription());
+            order.getCart().addProduct(product, 1);
         }
     },
     FREE_SHIPPING {

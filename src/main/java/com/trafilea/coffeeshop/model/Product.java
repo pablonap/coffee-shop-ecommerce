@@ -2,9 +2,12 @@ package com.trafilea.coffeeshop.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import org.springframework.lang.NonNull;
 
+// inconsistent naming convention, some entities doesn't include suffix "Entity" while others do
 @Entity
 @Table(name = "products")
 public class Product {
@@ -14,7 +17,7 @@ public class Product {
 
     private String name;
 
-    private Double price;
+    private double price;
 
     private String category;
 
@@ -33,7 +36,7 @@ public class Product {
         return id;
     }
 
-    public void setId(long id) {
+    void setId(long id) {
         this.id = id;
     }
 
@@ -54,11 +57,22 @@ public class Product {
     }
 
     public Set<CartProduct> getCartProducts() {
-        return cartProducts;
+        return Set.copyOf(cartProducts);
     }
 
-    public void setCartProducts(Set<CartProduct> cartProducts) {
-        this.cartProducts = cartProducts;
+    public void setCartProducts(@NonNull Set<CartProduct> cartProducts) {
+        this.cartProducts = new HashSet<>(cartProducts);
+    }
+
+    Product() {
+
+    }
+
+    public Product(@NonNull String name, double price, String category) {
+        this.price = price;
+        this.name = name;
+        this.cartProducts = new HashSet<>(0);
+        this.category = category;
     }
 
     @Override
@@ -76,11 +90,7 @@ public class Product {
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (price != null ? price.hashCode() : 0);
-        result = 31 * result + (category != null ? category.hashCode() : 0);
-        return result;
+        return Objects.hash(id);
     }
 
     @Override

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.Objects;
 
+// inconsistent naming convention, some entities doesn't include suffix "Entity" while others do
 @Entity
 @Table(name = "roles")
 public class RoleEntity {

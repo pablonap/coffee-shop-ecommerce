@@ -20,19 +20,19 @@ public class CartController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CartResponseDto> create(@RequestBody CartRequestDto cartRequestDto) {
-        return new ResponseEntity<>(cartService.create(cartRequestDto), HttpStatus.OK);
+    public CartResponseDto create(@RequestBody CartRequestDto cartRequestDto) {
+        return cartService.create(cartRequestDto);
     }
 
     @PutMapping("/{cartId}/add-product")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CartResponseDto> addProduct(@PathVariable("cartId") long cartId , @RequestBody CartRequestDto cartRequestDto) {
-        return new ResponseEntity<>(cartService.addProduct(cartId, cartRequestDto), HttpStatus.OK);
+    public CartResponseDto addProduct(@PathVariable("cartId") long cartId , @RequestBody CartRequestDto cartRequestDto) {
+        return cartService.addProduct(cartId, cartRequestDto);
     }
 
     @PutMapping("/{cartId}/product/{productId}/quantity")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CartResponseDto> modifyQuantity(@PathVariable("cartId") long cartId, @PathVariable("productId") long productId, @RequestBody CartProductQuantityRequestDto cartProductQuantityRequestDto) {
-        return new ResponseEntity<>(cartService.modifyQuantity(cartId, productId, cartProductQuantityRequestDto), HttpStatus.OK);
+    public CartResponseDto modifyQuantity(@PathVariable("cartId") long cartId, @PathVariable("productId") long productId, @RequestBody CartProductQuantityRequestDto cartProductQuantityRequestDto) {
+        return cartService.modifyQuantity(cartId, productId, cartProductQuantityRequestDto);
     }
 }
